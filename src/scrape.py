@@ -17,9 +17,6 @@ class Seed:
         print("name: %s \nmatures: %s \nseason: %s \nexposure: %s \ndifficulty: %s \ntiming: %s \nstarting: %s \ngrowing: %s \nharvest: %s"
          % (self.name, self.matures, self.season, self.exposure, self.difficulty, self.timing, self.starting, self.growing, self.harvest))
 
-    
-
-
 
 page = requests.get("https://www.westcoastseeds.com/products/pink-brandywine-organic")
 tree = html.fromstring(page.content)
