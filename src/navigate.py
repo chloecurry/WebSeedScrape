@@ -3,42 +3,40 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver #idk if i need both of these imports
 from selenium.webdriver.common.by import By
 
-driver = webdriver.Chrome()
-
-driver.get("https://www.westcoastseeds.com/collections/seeds")
-
-#seedList = ["Touchstone Gold", "Bull\'s Blood Organic"]
-seedList = ["Touchstone Gold", "Bull\'s Blood Organic", "Get Stuffed!", "Helenor (Coated) Certified Organic", "TFM", "Tres Fine Maraichere", "TFM (Tres Fine Maraichere)"]
 
 
-# Get scroll height.
-last_height = driver.execute_script("return document.body.scrollHeight")
-while True:
-    # Scroll down to the bottom.
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+def navigate(seedList):
+    driver = webdriver.Chrome()
+    result_dict = {}
+    urlList = []
+    notFoundList = []
 
-    # Wait to load the page.
-    time.sleep(5)
+    for seed in seedList:
+        try:
+            driver.get("https://www.westcoastseeds.com/collections/seeds")
+            
+            search_button = driver.find_element(By.XPATH, '//*[@id="nav-search"]/button')
+            search_button.click()
+            search_bar = driver.find_element(By.XPATH, '//*[@id="Search"]')
+            search_bar.send_keys(seed)
+            search_bar.submit()
 
-    # Calculate new scroll height and compare with last scroll height.
-    new_height = driver.execute_script("return document.body.scrollHeight")
+            time.sleep(5)
 
-    if new_height == last_height:
-        break
+            seedElem = driver.find_element(By.XPATH, '/html/body/main/div[2]/div/div[3]/div/div[1]/div[2]/div[2]/ul/li[1]/a')
+            driver.execute_script("arguments[0].scrollIntoView();", seedElem)
+            time.sleep(2)
+            seedElem.click()
+            geturl = driver.current_url
+            urlList.append(geturl)
 
-    last_height = new_height
+        except Exception as e:
+            notFoundList.append(seed)
 
-time.sleep(10)
+    result_dict["found"] = urlList
+    result_dict["notFound"] = notFoundList
 
-for seed in seedList:
-    try:
-        seedElem = driver.find_element(By.XPATH, '//a[.//h3[contains(text(), "%s")]]' %seed)
-        driver.execute_script("arguments[0].scrollIntoView();", seedElem)
-        time.sleep(2)
-        seedElem.click()
-        geturl = driver.current_url
-        print(geturl)
-        driver.back()
-    except Exception as e:
-        print("seed not found: " + seed)
+    return result_dict
     
+    
+
