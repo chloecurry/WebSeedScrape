@@ -1,21 +1,30 @@
 import navigate
 import scrape
 from scrape import Seed as SeedObj
-#have list of names of seeds
-#navigate to all pages
-    #return page content
-#scrape all pages 
-    #return seed object
-#seed object -> excel spreadsheet/csv
-    #return excel spreadsheet/csv\
+import pandas as pd
+import re
 
-#seedList = ["Touchstone Gold", "Bull\'s Blood Organic", "Get Stuffed!", "Helenor (Coated) Certified Organic", "TFM", "Tres Fine Maraichere", "TFM (Tres Fine Maraichere)"]
-seedList = ["Touchstone Gold", "Bull\'s Blood Organic"]
+
+file = open("..\data\seeds.txt", "r")
+seed_txt = file.read()
+
+seed_txt_list = seed_txt.split("\n")
+seed_list = []
+
+for seed in seed_txt_list:
+    spl_seed = re.split(r" \(?\d", re.split(r"- ", seed)[1])[0]
+    seed_list.append(spl_seed)
+
 
 seedData = []
 
 nav_results = navigate.navigate(seedList)
 
-for seedUrl in nav_results.get("found"):
-    seedData.append(scrape.scrape(seedUrl))
+foundUrls = list(dict.fromkeys(nav_results.get("found")))
 
+for seedUrl in foundUrls:
+    seedData.append(SeedObj.seed_to_df(scrape.scrape(seedUrl)))
+
+seed_df = pd.DataFrame(seedData, columns= ["Name", "Matures", "Season", "Exposure", "Difficulty", "How to Grow"])
+
+seed_df.to_excel("seed_data.xlsx", sheet_name="test")

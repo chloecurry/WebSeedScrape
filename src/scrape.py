@@ -2,36 +2,50 @@ from lxml import html
 import requests
 
 class Seed:
-    def __init__(self, name, matures, season, exposure, difficulty, timing, starting, growing, harvest):
+    def __init__(self, name, matures, season, exposure, difficulty, htg):
         self.name = name
         self.matures = matures
         self.season = season
         self.exposure = exposure
         self.difficulty = difficulty
-        self.timing = timing
-        self.starting = starting
-        self.growing = growing
-        self.harvest = harvest
+        self.htg = htg
 
     def printSeed(self):
-        print("name: %s \nmatures: %s \nseason: %s \nexposure: %s \ndifficulty: %s \ntiming: %s \nstarting: %s \ngrowing: %s \nharvest: %s"
-         % (self.name, self.matures, self.season, self.exposure, self.difficulty, self.timing, self.starting, self.growing, self.harvest))
+        print("name: %s \nmatures: %s \nseason: %s \nexposure: %s \ndifficulty: %s \nhow to grow: %s"
+         % (self.name, self.matures, self.season, self.exposure, self.difficulty, self.htg))
+    
+    def seed_to_df(self):
+        return [self.name, self.matures, self.season, self.exposure, self.difficulty, self.htg]
 
 def scrape(url):
     page = requests.get(url)
     tree = html.fromstring(page.content)
 
     #name of variety
-    name = tree.xpath('//*[@id="shopify-section-product"]/div[1]/div/div[2]/div[1]/h1/text()')
+    name = tree.xpath('//h1[@class="header-font-secondary"]/text()')
     #print("name: ", name)
 
-    #details, not including title
-    details = tree.xpath('/html/body/main/div[2]/div/div[1]/div/div[2]/div[3]//p/text()')
-    #print("\ndetails: ", details )
+    #details & title
+    exposure = ""
+    matures = ""
+    season = ""
+    details = tree.xpath('//div[@class="product-facts"]//span/text() | //div[@class="product-facts"]//p/text()')
+    for id, entry in enumerate(details):
+        entry = entry.strip()
+        if(entry == "Exposure"):
+            exposure = details[id+1].strip()
+        elif(entry == "Season"):
+            season = details[id+1].strip()
+        elif(entry == "Matures"):
+            matures = details[id+1].strip()
 
     #all about panel 1 info from accordion panels, not includig title
-    allAboutPanel1 = tree.xpath("/html/body/main/div[3]/div/div/div/div[1]//p/text()")
-    #print("\n", allAboutPanel1)
+    aap = tree.xpath('//div[@id = "all-about"]//strong/text() | //div[@id = "all-about"]//p/text()')
+    for id, entry in enumerate(aap):
+        if(entry == "Difficulty"):
+            if(aap[id+1] != "Difficulty"):
+                difficulty = aap[id+1].strip()
 
-    return Seed(name=name[0], exposure = details[1], matures = details[3], season = details[5], difficulty = allAboutPanel1[0],
-    timing = allAboutPanel1[1], starting = allAboutPanel1[2], growing = allAboutPanel1[4], harvest = allAboutPanel1[5])
+    htgContent = tree.xpath('//div[@class="content-section how-to-grow"]//div[@class="htg-text"]//h4/text() | //div[@class="content-section how-to-grow"]//div[@class="htg-text"]//p/text()')
+
+    return Seed(name=name[0], exposure = exposure, matures = matures, season = season, difficulty = difficulty, htg = htgContent)

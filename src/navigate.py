@@ -21,11 +21,9 @@ def navigate(seedList):
             search_bar.send_keys(seed)
             search_bar.submit()
 
-            time.sleep(5)
+            time.sleep(2)
 
             seedElem = driver.find_element(By.XPATH, '/html/body/main/div[2]/div/div[3]/div/div[1]/div[2]/div[2]/ul/li[1]/a')
-            driver.execute_script("arguments[0].scrollIntoView();", seedElem)
-            time.sleep(2)
             seedElem.click()
             geturl = driver.current_url
             urlList.append(geturl)
