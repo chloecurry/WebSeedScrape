@@ -18,7 +18,7 @@ for seed in seed_txt_list:
 
 seedData = []
 
-nav_results = navigate.navigate(seedList)
+nav_results = navigate.navigate(seed_list)
 
 foundUrls = list(dict.fromkeys(nav_results.get("found")))
 
