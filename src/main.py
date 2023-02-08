@@ -22,6 +22,14 @@ nav_results = navigate.navigate(seed_list)
 
 foundUrls = list(dict.fromkeys(nav_results.get("found")))
 
+#create files with url and not found data (easier to run scrape later if changing fields)
+f_url = open("..\data\seedURLS.txt", "w")
+f_nf = open("..\data\\notFound.txt", "w")
+
+f_url.write(foundUrls)
+
+f_nf.write(nav_results.get("notFound"))
+
 for seedUrl in foundUrls:
     seedData.append(SeedObj.seed_to_df(scrape.scrape(seedUrl)))
 
