@@ -14,9 +14,11 @@ def navigate(seedList):
     for seed in seedList:
         try:
             driver.get("https://www.westcoastseeds.com/collections/seeds")
+            time.sleep(1)
             
             search_button = driver.find_element(By.XPATH, '//*[@id="nav-search"]/button')
             search_button.click()
+            time.sleep(1)
             search_bar = driver.find_element(By.XPATH, '//*[@id="Search"]')
             search_bar.send_keys(seed)
             search_bar.submit()
