@@ -32,7 +32,7 @@ import re
 
 # f_nf.write('\n'.join(notFoundUrls))
 
-file = open("..\data\seedURLS.txt", "r")
+file = open("..\data\\nfSeedURL.txt", "r")
 seed_url = file.read()
 
 seed_url_list = seed_url.split("\n")
@@ -44,4 +44,4 @@ for seedUrl in seed_url_list:
 
 seed_df = pd.DataFrame(seedData, columns= ["Name", "Latin", "Matures", "Season", "Exposure", "Difficulty", "How to Grow"])
 
-seed_df.to_excel("..\data\\seed_data2.xlsx", sheet_name="add latin")
+seed_df.to_excel("..\data\\seed_data_missing2.xlsx", sheet_name="missing")
