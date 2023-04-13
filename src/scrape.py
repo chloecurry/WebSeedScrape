@@ -1,6 +1,8 @@
 from lxml import html
 import requests
 
+#Retrieve information about growing and other seed characteristics from a given URL. Used after gathering all seed URLs in navigate
+
 class Seed:
     def __init__(self, name, matures, season, exposure, difficulty, latin, htg):
         self.name = name
@@ -22,14 +24,10 @@ def scrape(url):
     page = requests.get(url)
     tree = html.fromstring(page.content)
     
-    # #category
-    # category = " "
-    # category = tree.xpath('//*[@id="shopify-section-product"]/div[1]/div/div[2]/div[1]/nav/span[3]/a/text()')[0]
 
     #name of variety
     name= " "
     name = tree.xpath('//h1[@class="header-font-secondary"]/text()')
-    #print("name: ", name)
 
     #details & title
     exposure = ""

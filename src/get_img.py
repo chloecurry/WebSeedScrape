@@ -2,8 +2,9 @@ import requests
 from lxml import html
 from PIL import Image
 
+# Code to retrieve the photos of seeds from their product page on the West Coast Seeds website. 
 
-file = open("..\data\\nfSeedURL.txt", "r")
+file = open("..\data\\SeedURLS.txt", "r")
 seed_url = file.read()
 
 seed_url_list = seed_url.split("\n")

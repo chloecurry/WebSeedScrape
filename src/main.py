@@ -4,44 +4,38 @@ from scrape import Seed as SeedObj
 import pandas as pd
 import re
 
+# Initial code used for getting seed information from the west coast seeds website. Utilizes scrape and navigate functions.
+# Content was exported to xlsx for ease of use by community partners.
 
-# file = open("..\data\seeds.txt", "r")
-# seed_txt = file.read()
+# Read seed names from text file
+file = open("..\data\seed_names.txt", "r")
+seed_txt = file.read()
 
-# seed_txt_list = seed_txt.split("\n")
-# seed_list = []
+seed_list = seed_txt.split("\n")
 
-# for seed in seed_txt_list:
-#     split1 = re.split(r"- ", seed)[1]
-#     spl_seed = re.split(r" \(?\d", split1)[0]
-#     seed_list.append(spl_seed)
+#retrieve URLs (this step will take a while)
+nav_results = navigate.navigate(seed_list)
 
+foundUrls = list(dict.fromkeys(nav_results.get("found")))
+notFoundUrls = list(dict.fromkeys(nav_results.get("notFound")))
 
-# seedData = []
+#create files with url and not found data (easier to run scrape later if changing fields)
+f_url = open("..\data\seedURLS.txt", "w")
 
-# nav_results = navigate.navigate(seed_list)
+f_url.write('\n'.join(foundUrls))
 
-# foundUrls = list(dict.fromkeys(nav_results.get("found")))
-# notFoundUrls = list(dict.fromkeys(nav_results.get("notFound")))
-
-# #create files with url and not found data (easier to run scrape later if changing fields)
-# f_url = open("..\data\seedURLS.txt", "w")
-# f_nf = open("..\data\\notFound.txt", "w")
-
-# f_url.write('\n'.join(foundUrls))
-
-# f_nf.write('\n'.join(notFoundUrls))
-
-file = open("..\data\\nfSeedURL.txt", "r")
+file = open("..\data\\SeedURLS.txt", "r")
 seed_url = file.read()
 
 seed_url_list = seed_url.split("\n")
 
+#Get seed information from all URLs found using navigate
 seedData = []
 
 for seedUrl in seed_url_list:
     seedData.append(SeedObj.seed_to_df(scrape.scrape(seedUrl)))
 
+#Store information in a DataFrame for easy export to xlsx
 seed_df = pd.DataFrame(seedData, columns= ["Name", "Latin", "Matures", "Season", "Exposure", "Difficulty", "How to Grow"])
 
-seed_df.to_excel("..\data\\seed_data_missing2.xlsx", sheet_name="missing")
+seed_df.to_excel("..\data\\seed_data.xlsx", sheet_name="seeds")

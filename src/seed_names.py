@@ -1,5 +1,6 @@
 import re
 
+#This code was used to parse the sepcific names of seeds from information gathered from a PDF invoice.
 
 file = open("..\data\seeds.txt", "r")
 seed_txt = file.read()
